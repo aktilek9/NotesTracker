@@ -25,6 +25,10 @@ func (s *Service) GetNoteById(id int) (modules.Note, error) {
 	return s.repo.GetById(id)
 }
 
+func (s *Service) UpdateNote(id int, updatedNote modules.Note) error {
+	return s.repo.Update(id, updatedNote)
+}
+
 func (s *Service) DeleteNote(id int) error {
 	return s.repo.Delete(id)
 }

@@ -38,6 +38,19 @@ func (r *Repository) GetById(id int) (modules.Note, error) {
 	return modules.Note{}, errors.New("note not found")
 }
 
+func (r *Repository) Update(id int, updatedNote modules.Note) error {
+
+	for i, value := range r.db {
+		if value.ID == id {
+			updatedNote.ID = id
+			r.db[i] = updatedNote
+			return nil
+		}
+	}
+
+	return errors.New("note not found")
+}
+
 func (r *Repository) Delete(id int) error {
 
 	var index int = -1

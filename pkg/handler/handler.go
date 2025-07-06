@@ -64,9 +64,29 @@ func (h *Handler) getNoteById(c *gin.Context) {
 	}
 	c.JSON(200, note)
 }
-func (h *Handler) updateNote(c *gin.Context) {
 
+func (h *Handler) updateNote(c *gin.Context) {
+	idStr := c.Param("id")
+	id, err := strconv.Atoi(idStr)
+	if err != nil {
+		c.JSON(400, gin.H{"error": "Invalid ID"})
+		return
+	}
+
+	var note modules.Note
+	if err := c.BindJSON(&note); err != nil {
+		c.JSON(400, gin.H{"error": "Invalid input"})
+		return
+	}
+
+	if err := h.Service.UpdateNote(id, note); err != nil {
+		c.JSON(404, gin.H{"error": "Note not found"})
+		return
+	}
+
+	c.JSON(200, gin.H{"message": "Note updated"})
 }
+
 func (h *Handler) deleteNote(c *gin.Context) {
 	idStr := c.Param("id")
 	id, err := strconv.Atoi(idStr)
