@@ -5,15 +5,23 @@ import (
 	"errors"
 )
 
-type Repository struct {
+type repository struct {
 	db []modules.Note
 }
 
-func NewRepository() *Repository {
-	return &Repository{db: make([]modules.Note, 0)}
+type Repository interface {
+	Create(modules.Note) modules.Note
+	AllNotes() []modules.Note
+	GetById(id int) (modules.Note, error)
+	Update(id int, updatedNote modules.Note) error
+	Delete(id int) error
 }
 
-func (r *Repository) Create(note modules.Note) modules.Note {
+func NewRepository() *repository {
+	return &repository{db: make([]modules.Note, 0)}
+}
+
+func (r *repository) Create(note modules.Note) modules.Note {
 	if len(r.db) == 0 {
 		note.ID = 1
 	} else {
@@ -24,11 +32,11 @@ func (r *Repository) Create(note modules.Note) modules.Note {
 	return note
 }
 
-func (r *Repository) AllNotes() []modules.Note {
+func (r *repository) AllNotes() []modules.Note {
 	return r.db
 }
 
-func (r *Repository) GetById(id int) (modules.Note, error) {
+func (r *repository) GetById(id int) (modules.Note, error) {
 
 	for _, value := range r.db {
 		if value.ID == id {
@@ -38,7 +46,7 @@ func (r *Repository) GetById(id int) (modules.Note, error) {
 	return modules.Note{}, errors.New("note not found")
 }
 
-func (r *Repository) Update(id int, updatedNote modules.Note) error {
+func (r *repository) Update(id int, updatedNote modules.Note) error {
 
 	for i, value := range r.db {
 		if value.ID == id {
@@ -51,7 +59,7 @@ func (r *Repository) Update(id int, updatedNote modules.Note) error {
 	return errors.New("note not found")
 }
 
-func (r *Repository) Delete(id int) error {
+func (r *repository) Delete(id int) error {
 
 	var index int = -1
 	for idx, value := range r.db {

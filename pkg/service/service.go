@@ -5,30 +5,38 @@ import (
 	"NotesTracker/pkg/repository"
 )
 
-type Service struct {
-	repo *repository.Repository
+type Service interface {
+	CreateNote(note modules.Note) modules.Note
+	GetAllNotes() []modules.Note
+	GetNoteById(id int) (modules.Note, error)
+	UpdateNote(id int, updatedNote modules.Note) error
+	DeleteNote(id int) error
 }
 
-func NewService(repository *repository.Repository) *Service {
-	return &Service{repo: repository}
+type service struct {
+	repo repository.Repository
 }
 
-func (s *Service) CreateNote(note modules.Note) modules.Note {
+func NewService(repository repository.Repository) *service {
+	return &service{repo: repository}
+}
+
+func (s *service) CreateNote(note modules.Note) modules.Note {
 	return s.repo.Create(note)
 }
 
-func (s *Service) GetAllNotes() []modules.Note {
+func (s *service) GetAllNotes() []modules.Note {
 	return s.repo.AllNotes()
 }
 
-func (s *Service) GetNoteById(id int) (modules.Note, error) {
+func (s *service) GetNoteById(id int) (modules.Note, error) {
 	return s.repo.GetById(id)
 }
 
-func (s *Service) UpdateNote(id int, updatedNote modules.Note) error {
+func (s *service) UpdateNote(id int, updatedNote modules.Note) error {
 	return s.repo.Update(id, updatedNote)
 }
 
-func (s *Service) DeleteNote(id int) error {
+func (s *service) DeleteNote(id int) error {
 	return s.repo.Delete(id)
 }
