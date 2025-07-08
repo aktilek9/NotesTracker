@@ -1,0 +1,25 @@
+# Файлы окружения (секреты!)
+.env
+.env.local
+
+# Бинарные файлы и папки
+/bin/
+/__pycache__/
+*.exe
+*.test
+
+# Go-специфичные файлы
+vendor/
+go.sum
+
+# IDE/Editor файлы
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Логи и системные файлы
+*.log
+*.DS_Store
+
+Thumbs.db

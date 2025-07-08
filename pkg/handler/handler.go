@@ -51,13 +51,13 @@ func (h *Handler) getAllNotes(c *gin.Context) {
 
 func (h *Handler) getNoteById(c *gin.Context) {
 	idStr := c.Param("id")
-	id, err := strconv.Atoi(idStr)
+	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
 		c.JSON(400, gin.H{"error": "Invalid ID"})
 		return
 	}
 
-	note, err := h.Service.GetNoteById(id)
+	note, err := h.Service.GetNoteById(uint(id))
 	if err != nil {
 		c.JSON(404, gin.H{"error": "Note not found"})
 		return
@@ -67,7 +67,7 @@ func (h *Handler) getNoteById(c *gin.Context) {
 
 func (h *Handler) updateNote(c *gin.Context) {
 	idStr := c.Param("id")
-	id, err := strconv.Atoi(idStr)
+	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
 		c.JSON(400, gin.H{"error": "Invalid ID"})
 		return
@@ -79,7 +79,7 @@ func (h *Handler) updateNote(c *gin.Context) {
 		return
 	}
 
-	if err := h.Service.UpdateNote(id, note); err != nil {
+	if err := h.Service.UpdateNote(uint(id), note); err != nil {
 		c.JSON(404, gin.H{"error": "Note not found"})
 		return
 	}
@@ -89,13 +89,13 @@ func (h *Handler) updateNote(c *gin.Context) {
 
 func (h *Handler) deleteNote(c *gin.Context) {
 	idStr := c.Param("id")
-	id, err := strconv.Atoi(idStr)
+	id, err := strconv.ParseUint(idStr, 10, 32)
 	if err != nil {
 		c.JSON(400, gin.H{"error": "Invalid ID"})
 		return
 	}
 
-	if err := h.Service.DeleteNote(id); err != nil {
+	if err := h.Service.DeleteNote(uint(id)); err != nil {
 		c.JSON(404, gin.H{"error": "Note not found"})
 		return
 	}

@@ -2,76 +2,58 @@ package repository
 
 import (
 	"NotesTracker/modules"
-	"errors"
+
+	"gorm.io/gorm"
 )
 
 type repository struct {
-	db []modules.Note
+	db *gorm.DB
 }
 
 type Repository interface {
 	Create(modules.Note) modules.Note
 	AllNotes() []modules.Note
-	GetById(id int) (modules.Note, error)
-	Update(id int, updatedNote modules.Note) error
-	Delete(id int) error
+	GetById(id uint) (modules.Note, error)
+	Update(id uint, updatedNote modules.Note) error
+	Delete(id uint) error
 }
 
-func NewRepository() *repository {
-	return &repository{db: make([]modules.Note, 0)}
+func NewRepository(db *gorm.DB) *repository {
+	return &repository{db: db}
 }
 
 func (r *repository) Create(note modules.Note) modules.Note {
-	if len(r.db) == 0 {
-		note.ID = 1
-	} else {
-		note.ID = r.db[len(r.db)-1].ID + 1
-	}
-	r.db = append(r.db, note)
-
+	r.db.Create(&note)
 	return note
 }
 
 func (r *repository) AllNotes() []modules.Note {
-	return r.db
+	var notes []modules.Note
+	r.db.Find(&notes)
+	return notes
 }
 
-func (r *repository) GetById(id int) (modules.Note, error) {
-
-	for _, value := range r.db {
-		if value.ID == id {
-			return value, nil
-		}
+func (r *repository) GetById(id uint) (modules.Note, error) {
+	var note modules.Note
+	result := r.db.First(&note, id)
+	if result.Error != nil {
+		return modules.Note{}, result.Error
 	}
-	return modules.Note{}, errors.New("note not found")
+	return note, nil
 }
 
-func (r *repository) Update(id int, updatedNote modules.Note) error {
-
-	for i, value := range r.db {
-		if value.ID == id {
-			updatedNote.ID = id
-			r.db[i] = updatedNote
-			return nil
-		}
+func (r *repository) Update(id uint, updatedNote modules.Note) error {
+	var note modules.Note
+	result := r.db.First(&note, id)
+	if result.Error != nil {
+		return result.Error
 	}
 
-	return errors.New("note not found")
+	r.db.Model(&note).Updates(updatedNote)
+	return nil
 }
 
-func (r *repository) Delete(id int) error {
-
-	var index int = -1
-	for idx, value := range r.db {
-		if value.ID == id {
-			index = idx
-			break
-		}
-	}
-
-	if index != -1 {
-		r.db = append(r.db[:index], r.db[index+1:]...)
-		return nil
-	}
-	return errors.New("note not found")
+func (r *repository) Delete(id uint) error {
+	result := r.db.Delete(&modules.Note{}, id)
+	return result.Error
 }

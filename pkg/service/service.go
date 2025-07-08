@@ -8,9 +8,9 @@ import (
 type Service interface {
 	CreateNote(note modules.Note) modules.Note
 	GetAllNotes() []modules.Note
-	GetNoteById(id int) (modules.Note, error)
-	UpdateNote(id int, updatedNote modules.Note) error
-	DeleteNote(id int) error
+	GetNoteById(id uint) (modules.Note, error)
+	UpdateNote(id uint, updatedNote modules.Note) error
+	DeleteNote(id uint) error
 }
 
 type service struct {
@@ -29,14 +29,14 @@ func (s *service) GetAllNotes() []modules.Note {
 	return s.repo.AllNotes()
 }
 
-func (s *service) GetNoteById(id int) (modules.Note, error) {
+func (s *service) GetNoteById(id uint) (modules.Note, error) {
 	return s.repo.GetById(id)
 }
 
-func (s *service) UpdateNote(id int, updatedNote modules.Note) error {
+func (s *service) UpdateNote(id uint, updatedNote modules.Note) error {
 	return s.repo.Update(id, updatedNote)
 }
 
-func (s *service) DeleteNote(id int) error {
+func (s *service) DeleteNote(id uint) error {
 	return s.repo.Delete(id)
 }
