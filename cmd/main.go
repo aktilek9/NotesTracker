@@ -1,6 +1,7 @@
 package main
 
 import (
+	notestracker "NotesTracker"
 	"NotesTracker/database"
 	"NotesTracker/pkg/handler"
 	"NotesTracker/pkg/repository"
@@ -37,5 +38,9 @@ func main() {
 	h := handler.NewHandler(service)
 
 	router := h.InitRoutes()
-	router.Run(":8080")
+
+	server := notestracker.Server{}
+	if err := server.Run("8080", router); err != nil {
+		log.Fatalf("failed to start server: %v", err)
+	}
 }
